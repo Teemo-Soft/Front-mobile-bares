@@ -13,74 +13,69 @@ class ViewMap extends React.Component {
 
   constructor(props) {
     super(props);
-
     this.state = {
-      error:null,
+      error: null,
       actual_location: [],
-      locations: []
+      locations: [],
+      location1: { coords: { latitude: 10.9878, longitude: -74.7889 } },
+      location2: { coords: { latitude: 11.9878, longitude: -74.7889 } }
     };
   }
 
   componentDidMount() {
     navigator.geolocation.getCurrentPosition(
-       (position) => {
-         console.log(position);
-         this.setState({
-           latitud: position.coords.latitude,
-           longitud: position.coords.longitude,
-           error: null,
-           actual_location: [...this.state.actual_location, {lat: position.coords.latitude, lng: position.coords.longitude}]
-         });
-         
-       },
-       (error) => this.setState({ error: error.message }),
-       { enableHighAccuracy: false, timeout: 200000, maximumAge: 1000 },
-     );
-   }
+      (position) => {
+        this.setState({
+          latitud: position.coords.latitude,
+          longitud: position.coords.longitude,
+          error: null,
+          actual_location: [...this.state.actual_location, { lat: position.coords.latitude, lng: position.coords.longitude }],
+          locations: [...this.state.locations, { lat: position.coords.latitude, lng: position.coords.longitude, 
+            title: 'Título ubicación', description: 'Descripción de la ubicación'}
+          ]
+        });
+
+      },
+      (error) => this.setState({ error: error.message }),
+      { enableHighAccuracy: false, timeout: 200000, maximumAge: 1000 },
+    );
+    
+  }
 
 
   render() {
-      console.log(this.state.actual_location)
-    
+    console.log(this.state.locations)
 
-    
+
     return (
       <Container>
         <MapView
-        style={{ flex: 1 }}
-        initialRegion={{
-          latitude: 10.9878,
-          longitude:  -74.7889,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-          
-        }}
-      />
+          style={{ flex: 1 }}
+          initialRegion={{
+            latitude: 10.9878,
+            longitude: -74.7889,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+
+          }}
+        >
+
+          {this.state.locations.map((marker, key) => (
+            <MapView.Marker
+              key={key}
+              coordinate={{'latitude': marker.lat, 'longitude': marker.lng}}
+              title={marker.title}
+              description={marker.description}
+            />
+          ))}
+        </MapView>
+
       </Container>
     );
   }
-
-   /*
-
-  render() {
-    return (
-      <Container>
-        <MapView
-        style={{ flex: 1 }}
-        initialRegion={{
-          latitude: 10.9878,
-          longitude:  -74.7889,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-      />
-      </Container>
-    );
-  }
-  */
 }
 
- 
+
 
 
 export default ViewMapNavigator = createStackNavigator(
